@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget id="mendix.animatedgrid.AnimatedGrid" pluginWidget="true" needsEntityContext="true" offlineCapable="true"
+        supportedPlatform="Web"
+        xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
+    <name>Animated Grid</name>
+    <description>Animated Grid in Mendix</description>
+    <icon/>
+    <properties>
+        <propertyGroup caption="Data">
+            <property key="dataSource" type="datasource" isList="true" required="true">
+                <caption>Data source</caption>
+                <description>Data Source for the Grid elements</description>
+            </property>
+            <property key="elements" type="widgets" required="true" dataSource="dataSource">
+                <caption>Individual Grid element, needs container with class 'grid'</caption>
+                <description />
+            </property>
+        </propertyGroup>
+        <propertyGroup caption="UI">
+            <propertyGroup caption="Grid">
+                <property key="uiMonitorImagesLoaded" type="boolean" defaultValue="false">
+                    <caption>Monitor images</caption>
+                    <description>When using images and size is not fixed, set this to true.</description>
+                </property>
+                <property key="uiVendorPrefix" type="boolean" defaultValue="false">
+                    <caption>Vendor prefix</caption>
+                    <description>If set to true, add a vendor prefix to styles add dynamically.</description>
+                </property>
+                <property key="uiComponent" type="string" required="true" defaultValue="div">
+                    <caption>Component</caption>
+                    <description>Should be 'div'</description>
+                </property>
+                <property key="uiItemComponent" type="string" required="true" defaultValue="span">
+                    <caption>Item Component</caption>
+                    <description>Should be 'span'</description>
+                </property>
+                <property key="uiColumnWidth" type="string" required="true" defaultValue="150">
+                    <caption>Column width</caption>
+                    <description>Specify column width as an number(px), or percentage string. (Example "33.33%")</description>
+                </property>
+                <property key="uiGutterWidth" type="integer" required="true" defaultValue="5">
+                    <caption>Gutter width</caption>
+                    <description>Specify gutter width as an number.</description>
+                </property>
+                <property key="uiGutterHeight" type="integer" required="true" defaultValue="5">
+                    <caption>Gutter width</caption>
+                    <description>Specify gutter height as an number.</description>
+                </property>
+                <property key="uiDuration" type="integer" required="true" defaultValue="480">
+                    <caption>Duration</caption>
+                    <description>Specify duration of animation in ms.</description>
+                </property>
+                <property key="uiEasing" type="enumeration" defaultValue="quartOut">
+                    <caption>Easing</caption>
+                    <description></description>
+                    <enumerationValues>
+                        <enumerationValue key="linear">linear</enumerationValue>
+                        <enumerationValue key="easeIn">easeIn</enumerationValue>
+                        <enumerationValue key="easeOut">easeOut</enumerationValue>
+                        <enumerationValue key="easeInOut">easeInOut</enumerationValue>
+                        <enumerationValue key="sineIn">sineIn</enumerationValue>
+                        <enumerationValue key="sineOut">sineOut</enumerationValue>
+                        <enumerationValue key="sineInOut">sineInOut</enumerationValue>
+                        <enumerationValue key="quadIn">quadIn</enumerationValue>
+                        <enumerationValue key="quadOut">quadOut</enumerationValue>
+                        <enumerationValue key="quadInOut">quadInOut</enumerationValue>
+                        <enumerationValue key="cubicIn">cubicIn</enumerationValue>
+                        <enumerationValue key="cubicOut">cubicOut</enumerationValue>
+                        <enumerationValue key="cubicInOut">cubicInOut</enumerationValue>
+                        <enumerationValue key="quartIn">quartIn</enumerationValue>
+                        <enumerationValue key="quartOut">quartOut</enumerationValue>
+                        <enumerationValue key="quartInOut">quartInOut</enumerationValue>
+                        <enumerationValue key="quintIn">quintIn</enumerationValue>
+                        <enumerationValue key="quintOut">quintOut</enumerationValue>
+                        <enumerationValue key="quintInOut">quintInOut</enumerationValue>
+                        <enumerationValue key="expoIn">expoIn</enumerationValue>
+                        <enumerationValue key="expoOut">expoOut</enumerationValue>
+                        <enumerationValue key="expoInOut">expoInOut</enumerationValue>
+                        <enumerationValue key="circIn">circIn</enumerationValue>
+                        <enumerationValue key="circOut">circOut</enumerationValue>
+                        <enumerationValue key="circInOut">circInOut</enumerationValue>
+                        <enumerationValue key="backIn">backIn</enumerationValue>
+                        <enumerationValue key="backOut">backOut</enumerationValue>
+                        <enumerationValue key="backInOut">backInOut</enumerationValue>
+                    </enumerationValues>
+                </property>
+                <property key="uiAppearDelay" type="integer" required="true" defaultValue="30">
+                    <caption>Appear delay</caption>
+                    <description>Specify delay of the initial animation in ms.</description>
+                </property>
+                <property key="uiTransition" type="enumeration" defaultValue="fadeUp">
+                    <caption>Transition</caption>
+                    <description></description>
+                    <enumerationValues>
+                        <enumerationValue key="fade">fade</enumerationValue>
+                        <enumerationValue key="fadeDown">fadeDown</enumerationValue>
+                        <enumerationValue key="fadeUp">fadeUp</enumerationValue>
+                        <enumerationValue key="scaleDown">scaleDown</enumerationValue>
+                        <enumerationValue key="scaleUp">scaleUp</enumerationValue>
+                        <enumerationValue key="flip">flip</enumerationValue>
+                        <enumerationValue key="helix">helix</enumerationValue>
+                    </enumerationValues>
+                </property>
+                <property key="uiHorizontal" type="boolean" defaultValue="false">
+                    <caption>Horizontal</caption>
+                    <description>The transposed (horizontal) order of drawing elements. Retains the original order of the items.</description>
+                </property>
+                <property key="uiRTL" type="boolean" defaultValue="false">
+                    <caption>RTL</caption>
+                    <description>When true, items are placed right-to-left instead of the default left-to-right. Useful for RTL languages such as Arabic and Hebrew.</description>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Items">
+                <property key="uiItemWrapDiv" type="boolean" defaultValue="false">
+                    <caption>Wrap</caption>
+                    <description>Wrap item in a div. If you use a container, this is unnecessary.</description>
+                </property>
+                <property key="uiItemWrapClass" type="string" required="false" defaultValue="grid-item">
+                    <caption>Wrapper class</caption>
+                    <description>When using a wrapper for your item, you can set a class name for the element</description>
+                </property>
+            </propertyGroup>
+        </propertyGroup>
+    </properties>
+</widget>
