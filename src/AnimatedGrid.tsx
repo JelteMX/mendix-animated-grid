@@ -1,6 +1,6 @@
-import { FunctionComponent, createElement, ReactElement, cloneElement, useState, useEffect, ReactNode } from "react";
+import { FunctionComponent, createElement, useState, useEffect } from "react";
 import { hot } from "react-hot-loader/root";
-import { AnimatedGridContainerProps, UiSizesType } from "../typings/AnimatedGridProps";
+import { AnimatedGridContainerProps } from "../typings/AnimatedGridProps";
 import { ObjectItem } from "mendix";
 import StackGrid, { easings, transitions } from "react-stack-grid";
 import useDimensions from "react-cool-dimensions";
@@ -9,76 +9,8 @@ import { ResizeObserver } from "@juggle/resize-observer";
 
 import "./ui/AnimatedGrid.scss";
 
-interface SizesObject {
-    columnWidth: string | number;
-    gutterWidth: number;
-    gutterHeight: number;
-}
-
-interface SizesDefaults {
-    uiColumnWidth: string;
-    uiGutterWidth: number;
-    uiGutterHeight: number;
-}
-
-const getColumnWidth = (strWidth: string): string | number => {
-    const uiColumnWidth = strWidth.trim();
-    if (!uiColumnWidth) {
-        return 150;
-    }
-    const parsed = parseInt(uiColumnWidth, 10);
-    if (parsed.toString().length === uiColumnWidth.length && !isNaN(parsed)) {
-        return parsed;
-    }
-    return uiColumnWidth;
-};
-
-const getSizes = (defaultSizes: SizesDefaults, sizes: UiSizesType[], breakPoint: string): SizesObject => {
-    const defaultSize = {
-        columnWidth: getColumnWidth(defaultSizes.uiColumnWidth),
-        gutterWidth: defaultSizes.uiGutterWidth,
-        gutterHeight: defaultSizes.uiGutterHeight
-    };
-
-    if (!breakPoint || sizes.length === 0) {
-        return defaultSize;
-    }
-
-    const findUISize = sizes.find(s => s.sizeBreakPointID === breakPoint);
-    if (findUISize) {
-        return {
-            columnWidth: getColumnWidth(findUISize.sizeColumnWidth),
-            gutterWidth: findUISize.sizeGutterWidth,
-            gutterHeight: findUISize.sizeGutterHeight
-        };
-    }
-    return defaultSize;
-};
-
-const getBreakPoints = (sizes: UiSizesType[]): { [key: string]: number } => {
-    return sizes.reduce<{ [key: string]: number }>((acc, cur) => {
-        acc[cur.sizeBreakPointID] = cur.sizeBreakPoint;
-        return acc;
-    }, {});
-};
-
-const getChildren = (
-    objects: ObjectItem[],
-    render: (item: ObjectItem) => ReactNode,
-    wrap: boolean,
-    wrapClass = ""
-): JSX.Element[] => {
-    return objects.map(obj => {
-        const rendered = render(obj) as ReactElement;
-        const cloned = cloneElement(rendered, {
-            key: `child-${obj.id}`
-        });
-        if (wrap) {
-            return <div className={classNames(wrapClass)}>{cloned}</div>;
-        }
-        return cloned;
-    });
-};
+import getChildren from "./lib/getChildren";
+import { getBreakPoints, getSizes } from "./lib/sizes";
 
 const AnimatedGrid: FunctionComponent<AnimatedGridContainerProps> = props => {
     const { uiSizes, uiColumnWidth, uiGutterWidth, uiGutterHeight } = props;
