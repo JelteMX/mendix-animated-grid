@@ -10,6 +10,22 @@ export type UiEasingEnum = "linear" | "easeIn" | "easeOut" | "easeInOut" | "sine
 
 export type UiTransitionEnum = "fade" | "fadeDown" | "fadeUp" | "scaleDown" | "scaleUp" | "flip" | "helix";
 
+export interface UiSizesType {
+    sizeBreakPoint: number;
+    sizeBreakPointID: string;
+    sizeColumnWidth: string;
+    sizeGutterWidth: number;
+    sizeGutterHeight: number;
+}
+
+export interface UiSizesPreviewType {
+    sizeBreakPoint: number | null;
+    sizeBreakPointID: string;
+    sizeColumnWidth: string;
+    sizeGutterWidth: number | null;
+    sizeGutterHeight: number | null;
+}
+
 export interface AnimatedGridContainerProps {
     name: string;
     class: string;
@@ -32,6 +48,7 @@ export interface AnimatedGridContainerProps {
     uiRTL: boolean;
     uiItemWrapDiv: boolean;
     uiItemWrapClass?: string;
+    uiSizes: UiSizesType[];
 }
 
 export interface AnimatedGridPreviewProps {
@@ -54,4 +71,5 @@ export interface AnimatedGridPreviewProps {
     uiRTL: boolean;
     uiItemWrapDiv: boolean;
     uiItemWrapClass: string;
+    uiSizes: UiSizesPreviewType[];
 }

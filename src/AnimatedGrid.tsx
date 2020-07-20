@@ -1,12 +1,25 @@
-import { FunctionComponent, createElement, ReactElement, cloneElement, useState, useEffect } from "react";
+import { FunctionComponent, createElement, ReactElement, cloneElement, useState, useEffect, ReactNode } from "react";
 import { hot } from "react-hot-loader/root";
-import { AnimatedGridContainerProps } from "../typings/AnimatedGridProps";
+import { AnimatedGridContainerProps, UiSizesType } from "../typings/AnimatedGridProps";
 import { ObjectItem } from "mendix";
 import StackGrid, { easings, transitions } from "react-stack-grid";
+import useDimensions from "react-cool-dimensions";
 import classNames from "classnames";
-import sizeMe from "react-sizeme";
+import { ResizeObserver } from "@juggle/resize-observer";
 
 import "./ui/AnimatedGrid.scss";
+
+interface SizesObject {
+    columnWidth: string | number;
+    gutterWidth: number;
+    gutterHeight: number;
+}
+
+interface SizesDefaults {
+    uiColumnWidth: string;
+    uiGutterWidth: number;
+    uiGutterHeight: number;
+}
 
 const getColumnWidth = (strWidth: string): string | number => {
     const uiColumnWidth = strWidth.trim();
@@ -20,74 +33,107 @@ const getColumnWidth = (strWidth: string): string | number => {
     return uiColumnWidth;
 };
 
-const AnimatedGrid: FunctionComponent<AnimatedGridContainerProps & sizeMe.SizeMeProps> = props => {
-    const [loading, setLoading] = useState(true);
+const getSizes = (defaultSizes: SizesDefaults, sizes: UiSizesType[], breakPoint: string): SizesObject => {
+    const defaultSize = {
+        columnWidth: getColumnWidth(defaultSizes.uiColumnWidth),
+        gutterWidth: defaultSizes.uiGutterWidth,
+        gutterHeight: defaultSizes.uiGutterHeight
+    };
+
+    if (!breakPoint || sizes.length === 0) {
+        return defaultSize;
+    }
+
+    const findUISize = sizes.find(s => s.sizeBreakPointID === breakPoint);
+    if (findUISize) {
+        return {
+            columnWidth: getColumnWidth(findUISize.sizeColumnWidth),
+            gutterWidth: findUISize.sizeGutterWidth,
+            gutterHeight: findUISize.sizeGutterHeight
+        };
+    }
+    return defaultSize;
+};
+
+const getBreakPoints = (sizes: UiSizesType[]): { [key: string]: number } => {
+    return sizes.reduce<{ [key: string]: number }>((acc, cur) => {
+        acc[cur.sizeBreakPointID] = cur.sizeBreakPoint;
+        return acc;
+    }, {});
+};
+
+const getChildren = (
+    objects: ObjectItem[],
+    render: (item: ObjectItem) => ReactNode,
+    wrap: boolean,
+    wrapClass = ""
+): JSX.Element[] => {
+    return objects.map(obj => {
+        const rendered = render(obj) as ReactElement;
+        const cloned = cloneElement(rendered, {
+            key: `child-${obj.id}`
+        });
+        if (wrap) {
+            return <div className={classNames(wrapClass)}>{cloned}</div>;
+        }
+        return cloned;
+    });
+};
+
+const AnimatedGrid: FunctionComponent<AnimatedGridContainerProps> = props => {
+    const { uiSizes, uiColumnWidth, uiGutterWidth, uiGutterHeight } = props;
+
+    const { ref, currentBreakpoint } = useDimensions<HTMLDivElement>({
+        useBorderBoxSize: true,
+        polyfill: ResizeObserver,
+        breakpoints: getBreakPoints(uiSizes)
+    });
+
+    const sizes = getSizes({ uiColumnWidth, uiGutterWidth, uiGutterHeight }, uiSizes, currentBreakpoint);
+    const [loading, setIsLoading] = useState(true);
     const [objects, setObjects] = useState<ObjectItem[]>([]);
 
     useEffect(() => {
-        if (props.dataSource && props.dataSource.status === "available" && props.dataSource.items) {
-            setLoading(false);
-            setObjects(props.dataSource.items);
-        }
+        setIsLoading(props.dataSource.status === "loading");
+        setObjects(props.dataSource.items || []);
     }, [props.dataSource]);
 
     const empty = objects.length === 0;
-    const className = classNames("animated-grid", props.class, { loading, empty });
-
-    if (loading && empty) {
-        return (
-            <div className={className}>
-                <div className={classNames("loading_indicator")}>Loading grid...</div>
-            </div>
-        );
-    }
-
-    if (empty) {
-        return (
-            <div className={className}>
-                <div className={classNames("loading_indicator")}>No items in grid...</div>
-            </div>
-        );
-    }
+    const breakPointClass = currentBreakpoint ? `size-${currentBreakpoint}` : "";
+    const className = classNames("animated-grid", props.class, breakPointClass, { loading, empty });
 
     const easing = easings[props.uiEasing];
     const uiTransitions = transitions[props.uiTransition];
 
-    const children = objects.map(obj => {
-        const rendered = props.elements(obj) as ReactElement;
-        const cloned = cloneElement(rendered, {
-            key: `child-${obj.id}`
-        });
-        if (props.uiItemWrapDiv) {
-            return <div className={classNames(props.uiItemWrapClass)}>{cloned}</div>;
-        }
-        return cloned;
-    });
-
     return (
-        <StackGrid
-            columnWidth={getColumnWidth(props.uiColumnWidth)}
-            className={className}
-            component={props.uiComponent}
-            itemComponent={props.uiItemComponent}
-            gutterWidth={props.uiGutterWidth}
-            gutterHeight={props.uiGutterHeight}
-            duration={props.uiDuration}
-            easing={easing}
-            appearDelay={props.uiAppearDelay}
-            appear={uiTransitions.appear}
-            appeared={uiTransitions.appeared}
-            enter={uiTransitions.enter}
-            entered={uiTransitions.entered}
-            leaved={uiTransitions.leaved}
-            monitorImagesLoaded={props.uiMonitorImagesLoaded}
-            vendorPrefix={props.uiVendorPrefix}
-            horizontal={props.uiHorizontal}
-            rtl={props.uiRTL}
-        >
-            {children}
-        </StackGrid>
+        <div className={className} ref={ref}>
+            {loading && empty && <div className={classNames("loading_indicator")}>Loading grid...</div>}
+            {!loading && empty && <div className={classNames("loading_indicator")}>No items in grid...</div>}
+            {!loading && !empty && (
+                <StackGrid
+                    columnWidth={sizes.columnWidth}
+                    component={props.uiComponent}
+                    itemComponent={props.uiItemComponent}
+                    gutterWidth={sizes.gutterWidth}
+                    gutterHeight={sizes.gutterHeight}
+                    duration={props.uiDuration}
+                    easing={easing}
+                    appearDelay={props.uiAppearDelay}
+                    appear={uiTransitions.appear}
+                    appeared={uiTransitions.appeared}
+                    enter={uiTransitions.enter}
+                    entered={uiTransitions.entered}
+                    leaved={uiTransitions.leaved}
+                    monitorImagesLoaded={props.uiMonitorImagesLoaded}
+                    vendorPrefix={props.uiVendorPrefix}
+                    horizontal={props.uiHorizontal}
+                    rtl={props.uiRTL}
+                >
+                    {getChildren(objects, props.elements, props.uiItemWrapDiv, props.uiItemWrapClass)}
+                </StackGrid>
+            )}
+        </div>
     );
 };
 
-export default hot(sizeMe()(AnimatedGrid));
+export default hot(AnimatedGrid);

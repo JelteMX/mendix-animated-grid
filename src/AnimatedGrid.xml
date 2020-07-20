@@ -44,7 +44,7 @@
                     <description>Specify gutter width as an number.</description>
                 </property>
                 <property key="uiGutterHeight" type="integer" required="true" defaultValue="5">
-                    <caption>Gutter width</caption>
+                    <caption>Gutter height</caption>
                     <description>Specify gutter height as an number.</description>
                 </property>
                 <property key="uiDuration" type="integer" required="true" defaultValue="480">
@@ -121,6 +121,41 @@
                     <description>When using a wrapper for your item, you can set a class name for the element</description>
                 </property>
             </propertyGroup>
+        </propertyGroup>
+        <propertyGroup caption="Breakpoints">
+            <property key="uiSizes" type="object" isList="true" required="false">
+                <caption>Sizes</caption>
+                <description>This is a defined list of breakpoints. Make sure bounds are not overlapping</description>
+                <properties>
+                    <!-- BOUNDS -->
+                    <property key="sizeBreakPoint" type="integer" required="true" defaultValue="0">
+                        <caption>Breakpoint</caption>
+                        <category>Breakpoint</category>
+                        <description>This is the breakpoint that is defined</description>
+                    </property>
+                    <property key="sizeBreakPointID" type="string" required="true" defaultValue="xs">
+                        <caption>ID</caption>
+                        <category>Breakpoint</category>
+                        <description>This is an ID for your breakpoint. It will be appended to your container as well. Make sure it only consists of 2 letters, like 'xs', 'sm', 'lg' etc</description>
+                    </property>
+                    <!-- SIZES -->
+                    <property key="sizeColumnWidth" type="string" required="true" defaultValue="150">
+                        <caption>Column width</caption>
+                        <category>Size</category>
+                        <description>Specify column width as an number(px), or percentage string. (Example "33.33%")</description>
+                    </property>
+                    <property key="sizeGutterWidth" type="integer" required="true" defaultValue="5">
+                        <caption>Gutter width</caption>
+                        <category>Size</category>
+                        <description>Specify gutter width as an number.</description>
+                    </property>
+                    <property key="sizeGutterHeight" type="integer" required="true" defaultValue="5">
+                        <caption>Gutter height</caption>
+                        <category>Size</category>
+                        <description>Specify gutter height as an number.</description>
+                    </property>
+                </properties>
+            </property>
         </propertyGroup>
     </properties>
 </widget>
